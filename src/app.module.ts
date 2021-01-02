@@ -6,6 +6,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { join } from 'path';
 import { RestaurantsModule } from './restaurants/restaurants.module';
 import { Restaurant } from './restaurants/entities/restaurant.entity';
+import { UsersModule } from './users/users.module';
+import { User } from './users/entities/user.entity';
 
 @Module({
   imports: [
@@ -37,9 +39,11 @@ import { Restaurant } from './restaurants/entities/restaurant.entity';
       // "synchronize": true, because of this, it's synctonizes all the time to DB
       // "logging": process.env.NODE_ENV !== "prod",
       logging: true, // we're checking all the logs comming out of database
-      entities: [Restaurant], // because of this, restaurant table goes to our database
+      entities: [User],
+      // entities: [Restaurant], // because of this, restaurant table goes to our database
     }),
-    RestaurantsModule,
+    // RestaurantsModule,
+    UsersModule,
   ],
   controllers: [],
   providers: [],
