@@ -5,7 +5,7 @@ import { RestaurantResolver } from './restaurants.resolver';
 import { RestaurantService } from './restaurants.service';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([Restaurant])], //forFeture allowing TypeORMModule to import certain features
-    providers:[RestaurantResolver, RestaurantService]
+  imports: [TypeOrmModule.forFeature([Restaurant])], // importing Restaurant feature, forFeture allowing TypeORMModule to import certain features
+  providers: [RestaurantResolver, RestaurantService], // Service had to be imported in our "provicers" so it can injected to our Restaurant Resolver class
 })
 export class RestaurantsModule {}
