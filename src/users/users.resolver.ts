@@ -1,4 +1,6 @@
+import { UseGuards } from '@nestjs/common';
 import { Resolver, Query, Mutation, Args, Context } from '@nestjs/graphql';
+import { AuthGuard } from 'src/auth/auth.guard';
 import {
   CreateAccountInput,
   CreateAccountOutput,
@@ -49,6 +51,7 @@ export class UserResolver {
   }
 
   @Query((returns) => User)
+  @UseGuards(AuthGuard)
   me(@Context() context) {
     console.log(context);
   }
