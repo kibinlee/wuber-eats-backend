@@ -1,9 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import * as jwt from 'jsonwebtoken';
 import { CreateAccountInput } from './dtos/create-account.dto';
 import { LoginInput } from './dtos/login.dto';
 import { User } from './entities/user.entity';
+import { ConfigService } from '@nestjs/config';
 import { JwtService } from 'src/jwt/jwt.service';
 import { EditProfileInput } from './dtos/edit-profile.dto';
 import { Verification } from './entities/verification.entity';
@@ -14,6 +16,7 @@ export class UserService {
     @InjectRepository(User) private readonly users: Repository<User>,
     @InjectRepository(Verification)
     private readonly verifications: Repository<Verification>,
+    private readonly config: ConfigService,
     private readonly jwtService: JwtService,
   ) {}
 
@@ -45,7 +48,6 @@ export class UserService {
     email,
     password,
   }: LoginInput): Promise<{ ok: boolean; error?: string; token?: string }> {
-    // make a JWT and give it to the user
     try {
       const user = await this.users.findOne({ email });
       if (!user) {
@@ -82,6 +84,7 @@ export class UserService {
     userId: number,
     { email, password }: EditProfileInput,
   ): Promise<User> {
+    // console.log(editProfileInput);
     const user = await this.users.findOne(userId);
     if (email) {
       user.email = email;
@@ -92,5 +95,17 @@ export class UserService {
       user.password = password;
     }
     return this.users.save(user);
+  }
+
+  async verifyEmail(code: string): Promise<boolean> {
+    const verification = await this.verifications.findOne(
+      { code },
+      { relations: ['user'] },
+    );
+    if (verification) {
+      verification.user.verified = true;
+      this.users.save(verification.user);
+    }
+    return false;
   }
 }

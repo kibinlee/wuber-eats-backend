@@ -2,7 +2,6 @@ import { UseGuards } from '@nestjs/common';
 import { Resolver, Query, Mutation, Args, Context } from '@nestjs/graphql';
 import { AuthUser } from 'src/auth/auth-user.decorator';
 import { AuthGuard } from 'src/auth/auth.guard';
-import { isReturnStatement } from 'typescript';
 import {
   CreateAccountInput,
   CreateAccountOutput,
@@ -10,6 +9,7 @@ import {
 import { EditProfileInput, EditProfileOutput } from './dtos/edit-profile.dto';
 import { LoginInput, LoginOutput } from './dtos/login.dto';
 import { UserProfileInput, UserProfileOutput } from './dtos/user-profile.dto';
+import { VerifyEmailInput, VerifyEmailOutput } from './dtos/verify-email.dto';
 import { User } from './entities/user.entity';
 import { UserService } from './users.service';
 
@@ -38,9 +38,10 @@ export class UserResolver {
   }
 
   @Mutation((returns) => LoginOutput)
-  async login(@Args('input') loginInput: LoginInput) {
+  async login(@Args('input') loginInput: LoginInput): Promise<LoginOutput> {
     try {
-      return await this.usersService.login(loginInput);
+      const { ok, error, token } = await this.usersService.login(loginInput);
+      return { ok, error, token };
     } catch (error) {
       return {
         ok: false,
@@ -58,10 +59,10 @@ export class UserResolver {
   @UseGuards(AuthGuard)
   @Query((returns) => UserProfileOutput)
   async userProfile(
-    @Args() UserProfileInput: UserProfileInput,
+    @Args() userProfileInput: UserProfileInput,
   ): Promise<UserProfileOutput> {
     try {
-      const user = await this.usersService.findById(UserProfileInput.userId);
+      const user = await this.usersService.findById(userProfileInput.userId);
       if (!user) {
         throw Error();
       }
@@ -85,6 +86,7 @@ export class UserResolver {
   ): Promise<EditProfileOutput> {
     try {
       await this.usersService.editProfile(authUser.id, editProfileInput);
+
       return {
         ok: true,
       };
@@ -94,5 +96,10 @@ export class UserResolver {
         error,
       };
     }
+  }
+
+  @Mutation((returns) => VerifyEmailOutput)
+  verifyEmail(@Args('input') { code }: VerifyEmailInput) {
+    this.usersService.verifyEmail(code);
   }
 }
