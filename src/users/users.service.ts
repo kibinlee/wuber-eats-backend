@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Entity, Repository } from 'typeorm';
 import * as jwt from 'jsonwebtoken';
 import { CreateAccountInput } from './dtos/create-account.dto';
 import { LoginInput } from './dtos/login.dto';
@@ -49,7 +49,10 @@ export class UserService {
     password,
   }: LoginInput): Promise<{ ok: boolean; error?: string; token?: string }> {
     try {
-      const user = await this.users.findOne({ email });
+      const user = await this.users.findOne(
+        { email },
+        { select: ['password'] },
+      );
       if (!user) {
         return {
           ok: false,
@@ -98,14 +101,21 @@ export class UserService {
   }
 
   async verifyEmail(code: string): Promise<boolean> {
-    const verification = await this.verifications.findOne(
-      { code },
-      { relations: ['user'] },
-    );
-    if (verification) {
-      verification.user.verified = true;
-      this.users.save(verification.user);
+    try {
+      const verification = await this.verifications.findOne(
+        { code },
+        { relations: ['user'] },
+      );
+      if (verification) {
+        verification.user.verified = true;
+        console.log(verification.user);
+        this.users.save(verification.user);
+        return true;
+      }
+      throw new Error();
+    } catch (e) {
+      console.log(e);
+      return false;
     }
-    return false;
   }
 }
