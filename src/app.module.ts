@@ -14,6 +14,7 @@ import { User } from './users/entities/user.entity';
 import { JwtModule } from './jwt/jwt.module';
 import { JwtMiddleware } from './jwt/jwt.middleware';
 import { AuthModule } from './auth/auth.module';
+import { Verification } from './users/entities/verification.entity';
 
 @Module({
   imports: [
@@ -47,7 +48,7 @@ import { AuthModule } from './auth/auth.module';
       // "synchronize": true, because of this, it's synctonizes all the time to DB
       // "logging": process.env.NODE_ENV !== "prod",
       logging: true, // we're checking all the logs comming out of database
-      entities: [User],
+      entities: [User, Verification],
       // entities: [Restaurant], // because of this, restaurant table goes to our database
     }),
     // RestaurantsModule,
