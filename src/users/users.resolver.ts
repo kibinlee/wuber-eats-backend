@@ -52,6 +52,9 @@ export class UserResolver {
     return this.usersService.editProfile(authUser.id, editProfileInput);
   }
 
+  //<VerifyEmailOutput> for GraphQL
+  //VerifyEmailInput for NestJS
+  //<VerifyEmailOutput> for Typescript
   @Mutation((returns) => VerifyEmailOutput)
   verifyEmail(
     @Args('input') { code }: VerifyEmailInput,
