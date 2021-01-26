@@ -24,7 +24,7 @@ import { MailModule } from './mail/mail.module';
       envFilePath: process.env.NODE_ENV === 'dev' ? '.env.dev' : '.env.test',
       ignoreEnvFile: process.env.NODE_ENV === 'prod',
       validationSchema: Joi.object({
-        NODE_ENV: Joi.string().valid('dev', 'prod').required(),
+        NODE_ENV: Joi.string().valid('dev', 'prod', 'test').required(),
         DB_HOST: Joi.string().required(),
         DB_PORT: Joi.string().required(),
         DB_USERNAME: Joi.string().required(),
@@ -51,7 +51,9 @@ import { MailModule } from './mail/mail.module';
       synchronize: process.env.NODE_ENV !== 'prod',
       // "synchronize": true, because of this, it's synctonizes all the time to DB
       // "logging": process.env.NODE_ENV !== "prod",
-      logging: true, // we're checking all the logs comming out of database
+      //logging: true, // we're checking all the logs comming out of database
+      logging:
+        process.env.NODE_ENV !== 'prod' && process.env.NODE_ENV !== 'test',
       entities: [User, Verification],
       // entities: [Restaurant], // because of this, restaurant table goes to our database
     }),
