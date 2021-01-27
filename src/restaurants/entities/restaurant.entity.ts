@@ -11,14 +11,19 @@ import { Category } from './category.entity';
 
 //With this single class, we generates GraphQL schema and actual database.
 export class Restaurant extends CoreEntity {
-  @Field((type) => String) //GraphQL
-  @Column() //TypeORM
+  @Field((type) => String)
+  @Column()
   @IsString()
   @Length(5)
   name: string;
 
+  @Field((type) => String)
+  @Column()
+  @IsString()
+  coverImg: string;
+
   //   @Field((type) => Boolean, { defaultValue: true })
-  @Field((type) => String, { defaultValue: 'Gangnam' })
+  @Field((type) => String, { defaultValue: '강남' })
   @Column()
   @IsString()
   address: string;
