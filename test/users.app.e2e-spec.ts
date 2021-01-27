@@ -16,7 +16,7 @@ jest.mock('got', () => {
 const GRAPHQL_ENDPOINT = '/graphql';
 
 const testUser = {
-  email: 'nico@las.com',
+  email: 'kbl@ggg.com',
   password: '12345',
 };
 
