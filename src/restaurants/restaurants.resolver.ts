@@ -11,6 +11,7 @@ import { RestaurantService } from './restaurants.service';
 @Resolver((of) => Restaurant)
 export class RestaurantResolver {
   constructor(private readonly restaurantService: RestaurantService) {} //what is different is we Imported "Service" in this resolver
+
   @Mutation((returns) => CreateRestaurantOutput)
   async createRestaurant(
     @AuthUser() authUser: User,
