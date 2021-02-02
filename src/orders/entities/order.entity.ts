@@ -59,7 +59,7 @@ export class Order extends CoreEntity {
   @JoinTable()
   items: OrderItem[];
 
-  @Column({ nullable: true })
+  @Column({ type: 'enum', enum: OrderStatus, default: OrderStatus.Pending })
   @Field((type) => Float, { nullable: true })
   @IsNumber()
   total?: number;
