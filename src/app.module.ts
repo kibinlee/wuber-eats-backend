@@ -48,9 +48,12 @@ import { OrderItem } from './orders/entities/order-item.entity';
       // autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
       autoSchemaFile: true, // setting schema on the memory'
       // context: ({ req }) => ({ user: req['user'] }),
-      context: ({ req }) => {
-        console.log(req);
-        return { user: req['user'] };
+      context: ({ req, connection }) => {
+        if (req) {
+          return { user: req['user'] };
+        } else {
+          console.log(connection);
+        }
       },
     }),
     TypeOrmModule.forRoot({
