@@ -40,18 +40,6 @@ export class RestaurantService {
     private readonly categories: CategoryRepository,
   ) {}
 
-  // async getOrCreate(name: string): Promise<Category> {
-  //   const categoryName = name.trim().toLowerCase();
-  //   const categorySlug = categoryName.replace(/ /g, '-');
-  //   let category = await this.categories.findOne({ slug: categorySlug });
-  //   if (!category) {
-  //     category = await this.categories.save(
-  //       this.categories.create({ slug: categorySlug, name: categoryName }),
-  //     );
-  //   }
-  //   return category;
-  // }
-
   async createRestaurant(
     owner: User,
     createRestaurantInput: CreateRestaurantInput,
@@ -108,7 +96,6 @@ export class RestaurantService {
           ...(category && { category }),
         },
       ]);
-
       return {
         ok: true,
       };
@@ -164,7 +151,6 @@ export class RestaurantService {
       };
     }
   }
-
   countRestaurants(category: Category) {
     return this.restaurants.count({ category });
   }
@@ -184,13 +170,16 @@ export class RestaurantService {
         where: {
           category,
         },
+        order: {
+          isPromoted: 'DESC',
+        },
         take: 25,
         skip: (page - 1) * 25,
       });
-      category.restaurants = restaurants;
       const totalResults = await this.countRestaurants(category);
       return {
         ok: true,
+        restaurants,
         category,
         totalPages: Math.ceil(totalResults / 25),
       };
@@ -207,6 +196,9 @@ export class RestaurantService {
       const [restaurants, totalResults] = await this.restaurants.findAndCount({
         skip: (page - 1) * 25,
         take: 25,
+        order: {
+          isPromoted: 'DESC',
+        },
       });
       return {
         ok: true,
@@ -222,11 +214,13 @@ export class RestaurantService {
     }
   }
 
-  async findRestaurnatById({
+  async findRestaurantById({
     restaurantId,
   }: RestaurantInput): Promise<RestaurantOutput> {
     try {
-      const restaurant = await this.restaurants.findOne(restaurantId);
+      const restaurant = await this.restaurants.findOne(restaurantId, {
+        relations: ['menu'],
+      });
       if (!restaurant) {
         return {
           ok: false,
@@ -341,6 +335,7 @@ export class RestaurantService {
       };
     }
   }
+
   async deleteDish(
     owner: User,
     { dishId }: DeleteDishInput,
