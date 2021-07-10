@@ -96,8 +96,8 @@ export class CategoryResolver {
     return this.restaurantService.findRestaurantById(restaurantInput);
   }
 
-  @Query((returns) => RestaurantOutput)
-  searchrestaurant(
+  @Query((returns) => SearchRestaurantOutput)
+  searchRestaurant(
     @Args('input') searchRestaurantInput: SearchRestaurantInput,
   ): Promise<SearchRestaurantOutput> {
     return this.restaurantService.searchRestaurantByName(searchRestaurantInput);
