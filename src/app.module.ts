@@ -26,6 +26,7 @@ import { OrderItem } from './orders/entities/order-item.entity';
 import { PaymentsModule } from './payments/payments.module';
 import { Payment } from './payments/entities/payment.entity';
 import { ScheduleModule } from '@nestjs/schedule';
+import { UploadsModule } from './uploads/uploads.module';
 
 @Module({
   imports: [
@@ -44,6 +45,8 @@ import { ScheduleModule } from '@nestjs/schedule';
         MAILGUN_API_KEY: Joi.string().required(),
         MAILGUN_DOMAIN_NAME: Joi.string().required(),
         MAILGUN_FROM_EMAIL: Joi.string().required(),
+        // S3_ACCESSKEY_ID: Joi.string().required(),
+        // S3_ACCESS_SECRET: Joi.string().required(),
       }),
     }),
     GraphQLModule.forRoot({
@@ -104,6 +107,7 @@ import { ScheduleModule } from '@nestjs/schedule';
       fromEmail: process.env.MAILGUN_FROM_EMAIL,
     }),
     PaymentsModule,
+    UploadsModule,
   ],
   controllers: [],
   providers: [],
