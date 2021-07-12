@@ -15,10 +15,9 @@ import { EditOrderInput, EditOrderOutput } from './dtos/edit-order.dto';
 import { GetOrderInput, GetOrderOutput } from './dtos/get-order.dto';
 import { GetOrdersInput, GetOrdersOutput } from './dtos/get-orders.dto';
 import { OrderUpdatesInput } from './dtos/order-updates.dto';
+import { TakeOrderInput, TakeOrderOutput } from './dtos/take-order.dto';
 import { Order } from './entities/order.entity';
 import { OrderService } from './orders.service';
-
-const pubsub = new PubSub();
 
 @Resolver((of) => Order)
 export class OrderResolver {
@@ -34,7 +33,7 @@ export class OrderResolver {
     @Args('input')
     createOrderInput: CreateOrderInput,
   ): Promise<CreateOrderOutput> {
-    return this.ordersService.crateOrder(customer, createOrderInput);
+    return this.ordersService.createOrder(customer, createOrderInput);
   }
 
   @Query((returns) => GetOrdersOutput)
@@ -74,6 +73,7 @@ export class OrderResolver {
   pendingOrders() {
     return this.pubSub.asyncIterator(NEW_PENDING_ORDER);
   }
+
   @Subscription((returns) => Order)
   @Role(['Delivery'])
   cookedOrders() {
@@ -99,5 +99,14 @@ export class OrderResolver {
   @Role(['Any'])
   orderUpdates(@Args('input') orderUpdatesInput: OrderUpdatesInput) {
     return this.pubSub.asyncIterator(NEW_ORDER_UPDATE);
+  }
+
+  @Mutation((returns) => TakeOrderOutput)
+  @Role(['Delivery'])
+  takeOrder(
+    @AuthUser() driver: User,
+    @Args('input') takeOrderInput: TakeOrderInput,
+  ): Promise<TakeOrderOutput> {
+    return this.ordersService.takeOrder(driver, takeOrderInput);
   }
 }
